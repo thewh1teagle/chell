@@ -92,7 +92,10 @@ void exit_handler(char **argv) {
 }
 
 int built_in_commands_handler(char **argv) {
-    cd_handler(argv);
+
+    if (cd_handler(argv) == 0) {
+        return 0;
+    }
     exit_handler(argv);
 }
 
