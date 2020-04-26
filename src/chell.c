@@ -9,6 +9,35 @@
 #include <limits.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <limits.h>
+#include <signal.h>
+
+
+typedef struct ENV {
+    char *username;
+    char *hostname;
+
+    void (*clean_up)(struct ENV *env);
+
+} ENV;
+
+void get_hostname(ENV *env) {
+    env->hostname = malloc(_SC_HOST_NAME_MAX);
+    gethostname(env->hostname, _SC_HOST_NAME_MAX);
+}
+
+void get_username(ENV *env) {
+    env->username = getenv("USER");
+    
+}
+
+void clean_up(ENV *env) {
+    free(env->hostname);
+}
+
+void free_all(ENV *env) {
+    free(env->hostname);
+}
 
 
 char **split(char string[], char *sep) {
@@ -100,17 +129,34 @@ int built_in_commands_handler(char **argv) {
 }
 
 
+void clean_up_and_exit(ENV *env, char **argv) {
+    system("clear");
+    printf("chell is exiting.. byee :) \n");
+    exit(0);
+}
+
+
 int main() {
+    signal(SIGINT, clean_up_and_exit);
+    ENV env;
+    env.clean_up = clean_up;
+    get_hostname(&env);
+    get_username(&env);
     do {
-        printf("$ ");
+        printf("%s@%s:~ ", env.username, env.hostname);
         char read_line[256];
         fgets(read_line, 256, stdin);
+        if (strlen(read_line) == 1) {
+            continue;
+        }
         read_line[strlen(read_line) - 1] = '\0'; // remove new line 
         char **argv = parse_command(read_line);
         if (built_in_commands_handler(argv)) {
             execute(argv);
         }
+        free(argv);
     } while (1);
+    env.clean_up(&env);
     return 0;
 }
 
