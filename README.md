@@ -20,7 +20,7 @@ make
 - [ ] autocompletions
 - [ ] git branch view support
 - [ ] history, alias
-- [ ] dynamic status (path, username, host, etc..)
+- [x] dynamic status (path, username, host, etc..)
 - [ ] simple command line arguments
 - [ ] man page
 - [ ] contribe to .bashrc aliases
