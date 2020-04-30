@@ -35,9 +35,9 @@ void clean_up(ENV *env) {
     free(env->hostname);
 }
 
-void free_all(ENV *env) {
-    free(env->hostname);
-}
+
+
+
 
 
 char **split(char string[], char *sep) {
@@ -113,6 +113,30 @@ int cd_handler(char **argv) {
     }
 }
 
+int history() {
+    FILE *fp;
+    char line[255];
+    fp = fopen(".history", "r");
+
+    int line_n=1;
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        printf("%d %s", line_n, line);
+        line_n++;
+    }
+    fclose(fp);
+}
+
+void history_handler() {
+    history();
+}
+
+void save_to_history(char *command) {
+    FILE *fp;
+    fp = fopen(".history", "a");
+    fprintf(fp, command);
+    fclose(fp);
+}
+
 
 void exit_handler(char **argv) {
     if (strcmp("exit", argv[0]) == 0) {
@@ -125,6 +149,11 @@ int built_in_commands_handler(char **argv) {
     if (cd_handler(argv) == 0) {
         return 0;
     }
+    if (strcmp(argv[0], "history") == 0) {
+        history_handler();
+        return 0;
+    }
+
     exit_handler(argv);
 }
 
@@ -143,12 +172,15 @@ int main() {
     get_hostname(&env);
     get_username(&env);
     do {
-        printf("%s@%s:~ ", env.username, env.hostname);
+        printf("\033[0;32m");
+        printf("%s@%s: $ ", env.username, env.hostname);
+        printf("\033[0m");
         char read_line[256];
         fgets(read_line, 256, stdin);
         if (strlen(read_line) == 1) {
             continue;
         }
+        save_to_history(read_line);
         read_line[strlen(read_line) - 1] = '\0'; // remove new line 
         char **argv = parse_command(read_line);
         if (built_in_commands_handler(argv)) {
