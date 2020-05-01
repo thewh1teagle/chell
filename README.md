@@ -19,8 +19,8 @@ make
 - [ ] redirections
 - [ ] autocompletions
 - [ ] git branch view support
-- [x] history, alias
-- [x] dynamic status (path, username, host, etc..)
+- [X] history, alias
+- [X] dynamic status (path, username, host, etc..)
 - [ ] simple command line arguments
 - [ ] man page
 - [ ] contribe to .bashrc aliases
