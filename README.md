@@ -19,7 +19,7 @@ make
 - [ ] redirections
 - [ ] autocompletions
 - [ ] git branch view support
-- [ ] history, alias
+- [x] history, alias
 - [x] dynamic status (path, username, host, etc..)
 - [ ] simple command line arguments
 - [ ] man page
