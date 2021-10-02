@@ -46,11 +46,13 @@ char **split(char string[], char *sep) {
     
     int i = 0;
     while (token != NULL) {
-        argv = realloc(argv, sizeof(argv) + sizeof(char*));
-        argv[i] = calloc(strlen(token), sizeof(char));
+        argv = realloc(argv, (i + 1) * sizeof(char*));
+        argv[i] = calloc(strlen(token) + 1, sizeof(char));
         strcpy(argv[i++], token);
         token = strtok(NULL, sep);
     }
+	argv = realloc(argv, (i + 1) * sizeof(char *));
+	argv[i] = NULL;
     return argv;
 }
 
@@ -59,7 +61,6 @@ char **parse_command(char command[]) {
     char **argv = split(command, " ");
     return argv;
 }
-
 
 void execute(char **argv) {
     pid_t  pid;
