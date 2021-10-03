@@ -46,11 +46,13 @@ char **split(char string[], char *sep) {
     
     int i = 0;
     while (token != NULL) {
-        argv = realloc(argv, sizeof(argv) + sizeof(char*));
-        argv[i] = calloc(strlen(token), sizeof(char));
+        argv = realloc(argv, (i + 1) * sizeof(char*));
+        argv[i] = calloc(strlen(token) + 1, sizeof(char));
         strcpy(argv[i++], token);
         token = strtok(NULL, sep);
     }
+	argv = realloc(argv, (i + 1) * sizeof(char *));
+	argv[i] = NULL;
     return argv;
 }
 
@@ -59,7 +61,6 @@ char **parse_command(char command[]) {
     char **argv = split(command, " ");
     return argv;
 }
-
 
 void execute(char **argv) {
     pid_t  pid;
@@ -111,6 +112,11 @@ int cd_handler(char **argv) {
         }
         return 0;
     }
+}
+
+char *ltrim(char *arg) {
+    while(isspace(*arg)) arg++;
+    return arg;
 }
 
 int history() {
@@ -177,7 +183,7 @@ int main() {
         printf("\033[0m");
         char read_line[256];
         fgets(read_line, 256, stdin);
-        if (strlen(read_line) == 1) {
+        if (strlen(ltrim(read_line)) == 0) {
             continue;
         }
         save_to_history(read_line);
